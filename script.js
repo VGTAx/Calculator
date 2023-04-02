@@ -222,7 +222,7 @@ function squareRoot() {
 document.addEventListener('click', (event) => {
   if(!event.target.classList.contains('btn')) return
   let key = event.target.textContent;  
-  if(buttonValues.includes(key)) {
+  if(keyValues.includes(key)) {
     if(second === '0' && sign === ''){       
       first = checkDigit(first,key); 
       display.textContent = first;
@@ -279,7 +279,7 @@ document.addEventListener('keydown', (event) => {
   
   let key = event.code == 'Digit5' && event.shiftKey ?
             '%' : event.code; 
-  if(buttonValues.includes(key)) {
+  if(keyCodes.includes(key)) {
     if(second === '0' && sign === ''){       
       first = checkDigit(first,event.key); 
       display.textContent = first;
@@ -296,7 +296,7 @@ document.addEventListener('keydown', (event) => {
       display.textContent = second;
     }    
   }
-  if(signsValues.includes(key)){
+  if(signsCodes.includes(key)){
     sign = event.key;
     display.textContent = sign;
   }  
