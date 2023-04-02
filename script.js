@@ -6,14 +6,18 @@ let result = false; //The variable indicates that the math operation has complet
 let percent = 0; // the variable stores the value %
 let digitAfterComma = 0; // the varibale stores the count of digit after comma in 
                         // float number. Its use for function toFixed()
-let keyValues = ['0','1','2', '3','4','5','6','7','8','9','.']; 
+let tempBTN = document.querySelectorAll('button');
+                       
+let keyValues = ['0','1','2', '3','4','5','6','7','8','9','.', ',']; 
 let keyCodes = ['Digit0','Digit1', 'Digit2', 'Digit3', 'Digit4', 
-                  'Digit5','Digit6','Digit7', 'Digit8', 'Digit9', 
-                  'Numpad0', 'Numpad1','Numpad2','Numpad3','Numpad4',
-                  'Numpad5','Numpad6','Numpad7','Numpad8','Numpad9']; // key
+                'Digit5','Digit6','Digit7', 'Digit8', 'Digit9', 
+                'Numpad0', 'Numpad1','Numpad2','Numpad3','Numpad4',
+                'Numpad5','Numpad6','Numpad7','Numpad8','Numpad9', 'NumpadDecimal']; // key
 let signsValues = ['+','-','*','/'];
 let signsCodes = ['NumpadAdd','NumpadSubtract', 'NumpadDivide', 'NumpadMultiply'];
 let display = document.querySelector('.display p');
+let btn  = null;
+
 //Clear all values 
 function Clear() {
   first = '0';
@@ -37,10 +41,13 @@ function ClearOneDigit() {
   if(first !== '0' && second !=='0' && result) return;
   if(first !== '0' && sign === ''){
     first = first.slice(0,-1);
-    return display.textContent = first.length == 0 ? '0' : display.textContent = first;
+    first = first.length == 0 ? '0' : first;
+    display.textContent = first;
+    return first;
   }
   second = second.slice(0,-1);
-  display.textContent = second.length > 0 ? display.textContent = second : 0;
+  second = second.length == 0 ? '0' : second;
+  display.textContent = second;
 }
 //count number digit after comma for method toFixed();
 function NumberDigitAfterComma(first, second, sign) {
@@ -75,16 +82,16 @@ function NumberDigitAfterComma(first, second, sign) {
 //Checks for a dot in a number 
 function checkDigit(number, key) {
   if(number === '0') {
-    if(key === '.') {
-      return number +=key
+    if(key === '.' || key === ',') {
+      return number += '.';
     }
     return number = key;
   }
   if(number !== '0') {
-    if(number.includes('.') && key === '.') {
+    if(number.includes('.', ',') && (key === '.' || key === ',')) {
       return number
     } 
-    return number += key;
+    return number = key == (',') ? number+='.' : number+=key;
   }
 }
 //calc result
@@ -274,9 +281,24 @@ document.addEventListener('click', (event) => {
       break;
   }
 })
-
+document.addEventListener('keyup', (event) => {
+  for (const iterator of tempBTN) {
+    if(event.code == iterator.getAttribute('keyNum') ||
+       event.code == iterator.getAttribute('key')) {
+        iterator.classList.toggle('btnDown');
+      break;
+    }
+  }
+})
 document.addEventListener('keydown', (event) => {
-  
+  alert(event.shiftKey);
+  for (const iterator of tempBTN) {
+    if(event.code == iterator.getAttribute('keyNum') ||
+       event.code == iterator.getAttribute('key')) {
+      iterator.classList.toggle('btnDown');
+      break;
+    }
+  }
   let key = event.code == 'Digit5' && event.shiftKey ?
             '%' : event.code; 
   if(keyCodes.includes(key)) {
