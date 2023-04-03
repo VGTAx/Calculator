@@ -1,46 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="style.css" rel="stylesheet"/> 
+  <link href="style.css" rel="stylesheet" />
   <title>Calculator</title>
 </head>
+
 <body>
   <div class="body">
     <div class="calculator">
-      <div class="display">  
-        <p>0</p>    
+      <div class="display">
+        <input class="input" readonly type="text">
       </div>
       <div class="buttons">
+        <button class="btn" key="%">%</button>
         <button class="btn" keyNum="Delete">CE</button>
         <button class="btn" keyNum="Escape">C</button>
         <button class="btn" keyNum="Backspace"><=</button>
-        <button class="btn" key="shiftKey">%</button>
+
         <button class="btn" keyNum="KeyR"><sup>1</sup>/<sub>x</sub></button>
         <button class="btn" keyNum="KeyQ">x<sup>2</sup></button>
         <button class="btn">√X</button>
-        <button class="btn" keyNum="NumpadDivide">/</button>
+        <button class="btn sign" keyNum="NumpadDivide">/</button>
+
         <button class="btn" keyNum="Numpad7" key="Digit7">7</button>
         <button class="btn" keyNum="Numpad8" key="Digit8">8</button>
         <button class="btn" keyNum="Numpad9" key="Digit9">9</button>
-        <button class="btn" keyNum="NumpadMultiply">*</button>
+        <button class="btn sign" keyNum="NumpadMultiply">*</button>
+
         <button class="btn" keyNum="Numpad4" key="Digit4">4</button>
         <button class="btn" keyNum="Numpad5" key="Digit5">5</button>
         <button class="btn" keyNum="Numpad6" key="Digit6">6</button>
-        <button class="btn" keyNum="NumpadSubtract">-</button>
+        <button class="btn sign" keyNum="NumpadSubtract">-</button>
+
         <button class="btn" keyNum="Numpad1" key="Digit1">1</button>
         <button class="btn" keyNum="Numpad2" key="Digit2">2</button>
         <button class="btn" keyNum="Numpad3" key="Digit3">3</button>
-        <button class="btn" keyNum="NumpadAdd">+</button>
+        <button class="btn sign" keyNum="NumpadAdd">+</button>
+
         <button class="btn" keyNum="F9">+/-</button>
         <button class="btn" keyNum="Numpad0" key="Digit0">0</button>
         <button class="btn" keyNum="NumpadDecimal">.</button>
-        <button class="btn sign" key="NumpadEnter">=</div>
+        <button class="btn equals" key="NumpadEnter">=
+      </div>
       </button>
     </div>
   </div>
   <script src="script.js"></script>
 </body>
+
 </html>
