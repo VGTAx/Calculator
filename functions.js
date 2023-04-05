@@ -1,17 +1,35 @@
 'use strict';
 
-import {first, second, sign, result, percent, input}
-from './script.js';
-let digitAfterComma = 0; // the varibale stores the count of digit after comma in 
-// float number. Its use for function toFixed()
-//Clear all values 
-function Clear() {
+// let first = '0'; //first Number
+// let second = '0'; //second Number
+// let sign = ''; // sign
+// let result = false; //The variable indicates that the math operation has completed. 
+// let percent = 0; // the variable stores the value %
+// let digitAfterComma = 0; // the varibale stores the count of digit after comma in 
+// // float number. Its use for function toFixed()
+// //Clear all values 
+
+// let keyValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ','];
+// let keyCodes = ['Digit0', 'Digit1', 'Digit2', 'Digit3', 'Digit4',
+//   'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9',
+//   'Numpad0', 'Numpad1', 'Numpad2', 'Numpad3', 'Numpad4',
+//   'Numpad5', 'Numpad6', 'Numpad7', 'Numpad8', 'Numpad9', 'NumpadDecimal'];
+// let signsValues = ['+', '-', '*', '/'];
+// let signsCodes = ['NumpadAdd', 'NumpadSubtract', 'NumpadDivide', 'NumpadMultiply'];
+
+// let input = document.querySelector('.display input');
+// let tempBTN = document.querySelectorAll('button');
+
+export { click, keyDown, keyUp, Clear, checkDigit, ClearOneDigit};
+
+function Clear(first,second,sign,percent,result, input) {
   first = '0';
   second = '0';
   sign = '';
   percent = '0';
   result = false;
   input.value = '0';
+  return {first,second,sign,percent, result};
 }
 //Clear current enter value
 function ClearEntry() {
@@ -23,17 +41,18 @@ function ClearEntry() {
   return second = '0';
 }
 //Clear one digit of number
-function ClearOneDigit() {
+function ClearOneDigit(first, second, sign, result, input) {
   if (first !== '0' && second !== '0' && result) return;
   if (first !== '0' && sign === '') {
     first = first.slice(0, -1);
     first = first.length == 0 ? '0' : first;
     input.value = first;
-    return first;
+    return {first,second};
   }
   second = second.slice(0, -1);
   second = second.length == 0 ? '0' : second;
   input.value = second;
+  return {first,second};
 }
 //count number digit after comma for method toFixed();
 function NumberDigitAfterComma(first, second, sign) {
@@ -85,36 +104,37 @@ function checkDigit(number, key) {
   }
 }
 //calc result
-function calcResult() { 
-    switch (sign) {
-      case '+':
-        //digitAfterComma = NumberDigitAfterComma(first, second, sign);
-        first = 10 ;
+function calcResult() {  
+  switch (sign) {
+    case '+':
+      digitAfterComma = NumberDigitAfterComma(first, second, sign);
+      first = (+first) + (+second) ;        
+      break;       
+    case '-':
+      digitAfterComma = NumberDigitAfterComma(first, second, sign);
+      first = (+first) - (+second);
+      break;
+    case '*':
+      first = (+first) * (+second);
+      digitAfterComma = first.toString().split('.')[1]?.length;
+      break;
+    case '/':
+      if (second === '0') {
+        input.value = 'Деление на 0 невозможно';
         break;
-      case '-':
-        digitAfterComma = NumberDigitAfterComma(first, second, sign);
-        first = (+first) - (+second);
-        break;
-      case '*':
-        first = (+first) * (+second);
-        digitAfterComma = first.toString().split('.')[1]?.length;
-        break;
-      case '/':
-        if (second === '0') {
-          input.value = 'Деление на 0 невозможно';
-          break;
-        }
-        first = (+first) / (+second);
-        // if (first === 0) {
-        //   first = 'Переполнение';
-        //   return input.value = first;
-        // }
-        digitAfterComma = first.toString().split('.')[1]?.length;
-        break;
-    }
-    first = first.toString().toFixed(digitAfterComma);
-    input.value = +first;
-    result = true;
+      }
+      first = (+first) / (+second);
+      // if (first === 0) {
+      //   first = 'Переполнение';
+      //   return input.value = first;
+      // }
+      digitAfterComma = first.toString().split('.')[1]?.length;
+      break;
+  }
+  first = first.toFixed(digitAfterComma);
+  input.value = +first;
+  result = true; 
+  return {first, result};       
 }
 //reverses the sign of a number
 function signReversal() {
@@ -217,8 +237,139 @@ function squareRoot() {
   }
 }
 
-export {
-  Clear, ClearEntry, ClearOneDigit, NumberDigitAfterComma,
-  checkDigit, calcResult, signReversal,
-  oneToShare, calcPercent, square, squareRoot
+function click(event) {
+  if (!event.target.classList.contains('btn')) return
+  let key = event.target.textContent;
+  if (keyValues.includes(key)) {
+    if (second === '0' && sign === '') {
+      first = checkDigit(first, key);
+      input.value = first;
+    }
+    // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the second will be equal to the entered value
+    else if (first !== '' && sign !== '' && result) {
+      second = '0';
+      second = checkDigit(second, key);
+      input.value = second;
+      result = false;
+    }
+    else {
+      second = checkDigit(second, key);
+      input.value = second;
+    }
+  }
+  if (signsValues.includes(key)) {
+    sign = key;
+    input.value = sign;
+  }
+  
+  switch (key) {
+    case 'CE':
+      return !result ? ClearEntry() : null;
+    case 'C':
+      Clear();
+      break;
+    case '<=':
+      ClearOneDigit();
+      break;
+    case '=':
+      calcResult();
+      break;
+    case '+/-':
+      signReversal();
+      break;
+    case '%':
+      calcPercent();
+      break;
+    case '1/x':
+      oneToShare();
+      break;
+    case 'x2':
+      square();
+      break;
+    case '√X':
+      squareRoot();
+      break;
+  }
+ 
+}
+function keyDown(event) {  
+  for (const iterator of tempBTN) {
+    if (event.key == iterator.getAttribute('key') && event.shiftKey) {
+      iterator.classList.toggle('btnDown');
+      break;
+    }
+    if (event.code == (iterator.getAttribute('keyNum') || iterator.getAttribute('key'))) {
+      iterator.classList.toggle('btnDown');
+      break;
+    }
+  }
+  let key = event.code == 'Digit5' && event.shiftKey ?
+    '%' : event.code && event.shiftKey ?
+      null : event.code;
+  if (keyCodes.includes(key)) {
+    if (second === '0' && sign === '') {
+      first = checkDigit(first, event.key);
+      input.value = input.value.length > 16 ? input.value : first
+    }
+    // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the second will be equal to the entered value
+    else if (first !== '' && sign !== '' && result) {
+      second = '0';
+      second = checkDigit(second, event.key);
+      input.value = input.value.length > 16 ? input.value : second;
+      result = false;
+    }
+    else {
+      second = checkDigit(second, event.key);
+      input.value = input.value.length > 16 ? input.value : second;
+    }
+  }
+  if (signsCodes.includes(key)) {
+    sign = event.key;
+    input.value = sign;
+  }
+
+  switch (key) {
+    case 'Delete':
+      return !result ? ClearEntry() : null;
+    case 'Escape':
+      Clear();
+      break;
+    case 'Backspace':
+      ClearOneDigit();
+      break;
+    case 'NumpadEnter':
+      calcResult();
+      break;
+    case 'Enter':
+      calcResult();
+      break;
+    case 'F9':
+      signReversal();
+      break;
+    case '%':
+      calcPercent();
+      break;
+    case 'KeyR':
+      oneToShare();
+      break;
+    case 'KeyQ':
+      square();
+      break;
+    case '√X':
+      squareRoot();
+      break;
+  }
+}
+function keyUp(event) {
+  for (const iterator of tempBTN) {
+    if (event.key == iterator.getAttribute('key') && event.shiftKey) {
+      iterator.classList.toggle('btnDown');
+      break;
+    }
+
+    if (event.code == (iterator.getAttribute('keyNum') || iterator.getAttribute('key'))) {
+      iterator.classList.toggle('btnDown');
+      break;
+    }
+  }
 }
