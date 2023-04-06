@@ -1,5 +1,5 @@
 import {click, keyDown, keyUp, checkDigit, Clear, ClearOneDigit} from './functions.js';
-
+export {input};
 let first = '0'; //first Number
 let second = '0'; //second Number
 let sign = ''; // sign
@@ -20,52 +20,54 @@ let signsCodes = ['NumpadAdd', 'NumpadSubtract', 'NumpadDivide', 'NumpadMultiply
 let input = document.querySelector('.display input');
 let tempBTN = document.querySelectorAll('button');
 
+let resObj = {
+  first: '0',
+  second: '0',
+  result: false,
+  sign: '',
+  percent: 0,
+};
 
 
 document.addEventListener('click', (event)=> {
-    let resObj = null;
+    
     if (!event.target.classList.contains('btn')) return
     let key = event.target.textContent;
     if (keyValues.includes(key)) {
-      if (second === '0' && sign === '') {
-        first = checkDigit(first, key);
-        input.value = first;
+      if (resObj.second === '0' && resObj.sign === '') {
+        resObj.first = checkDigit(resObj.first, key);
+        input.value = resObj.first;
       }
-      // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the second will be equal to the entered value
-      else if (first !== '' && sign !== '' && result) {
-        second = '0';
-        second = checkDigit(second, key);
-        input.value = second;
-        result = false;
+      // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the resObj.second will be equal to the entered value
+      else if (resObj.first !== '' && resObj.sign !== '' && resObj.result) {
+        resObj.second = '0';
+        resObj.second = checkDigit(resObj.second, key);
+        input.value = resObj.second;
+        resObj.result = false;
       }
       else {
-        second = checkDigit(second, key);
-        input.value = second;
+        resObj.second = checkDigit(resObj.second, key);
+        input.value = resObj.second;
       }
     }
     if (signsValues.includes(key)) {
-      sign = key;
-      input.value = sign;
+      resObj.sign = key;
+      input.value = resObj.sign;
     }
     
+
+
     switch (key) {
       case 'CE':
-        return !result ? ClearEntry() : null;
+        return !resObj.result ? ClearEntry() : null;
       case 'C':
-        resObj = Clear(first, second, sign, percent, result, input);
-        first = resObj.first;
-        second = resObj.second;
-        sign = resObj.sign;
-        percent = resObj.percent;
-        result = resObj.result;     
+        resObj = Clear(resObj);            
         break;
       case '<=':
-        resObj = ClearOneDigit(first, second, sign, result, input);
-        first = resObj.first;
-        second = resObj.second;
+        resObj = ClearOneDigit(resObj);        
         break;
       case '=':
-        calcResult();
+        resObj = calcResult(resObj);
         break;
       case '+/-':
         signReversal();

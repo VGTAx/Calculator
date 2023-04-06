@@ -19,8 +19,8 @@
 
 // let input = document.querySelector('.display input');
 // let tempBTN = document.querySelectorAll('button');
-
-export { click, keyDown, keyUp, Clear, checkDigit, ClearOneDigit};
+import {input} from './script.js';
+export { click, keyDown, keyUp, Clear, checkDigit, ClearOneDigit,};
 
 function Clear(first,second,sign,percent,result, input) {
   first = '0';
@@ -41,18 +41,18 @@ function ClearEntry() {
   return second = '0';
 }
 //Clear one digit of number
-function ClearOneDigit(first, second, sign, result, input) {
-  if (first !== '0' && second !== '0' && result) return;
-  if (first !== '0' && sign === '') {
-    first = first.slice(0, -1);
-    first = first.length == 0 ? '0' : first;
-    input.value = first;
-    return {first,second};
+function ClearOneDigit(resObj) {
+  if (obj.first !== '0' && obj.second !== '0' && obj.result) return;
+  if (obj.first !== '0' && obj.sign === '') {
+    obj.first = obj.first.slice(0, -1);
+    obj.first = obj.first.length == 0 ? '0' : obj.first;
+    input.value = obj.first;
+    return {obj};
   }
-  second = second.slice(0, -1);
-  second = second.length == 0 ? '0' : second;
-  input.value = second;
-  return {first,second};
+  obj.second = obj.second.slice(0, -1);
+  obj.second = obj.second.length == 0 ? '0' : obj.second;
+  input.value = obj.second;
+  return {obj};
 }
 //count number digit after comma for method toFixed();
 function NumberDigitAfterComma(first, second, sign) {
