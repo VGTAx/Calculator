@@ -1,88 +1,70 @@
 'use strict';
 
-// let first = '0'; //first Number
-// let second = '0'; //second Number
-// let sign = ''; // sign
-// let result = false; //The variable indicates that the math operation has completed. 
-// let percent = 0; // the variable stores the value %
-// let digitAfterComma = 0; // the varibale stores the count of digit after comma in 
-// // float number. Its use for function toFixed()
-// //Clear all values 
-
-// let keyValues = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ','];
-// let keyCodes = ['Digit0', 'Digit1', 'Digit2', 'Digit3', 'Digit4',
-//   'Digit5', 'Digit6', 'Digit7', 'Digit8', 'Digit9',
-//   'Numpad0', 'Numpad1', 'Numpad2', 'Numpad3', 'Numpad4',
-//   'Numpad5', 'Numpad6', 'Numpad7', 'Numpad8', 'Numpad9', 'NumpadDecimal'];
-// let signsValues = ['+', '-', '*', '/'];
-// let signsCodes = ['NumpadAdd', 'NumpadSubtract', 'NumpadDivide', 'NumpadMultiply'];
-
-// let input = document.querySelector('.display input');
-// let tempBTN = document.querySelectorAll('button');
-import {input} from './script.js';
-export { click, keyDown, keyUp, Clear, checkDigit, ClearOneDigit,};
-
-function Clear(first,second,sign,percent,result, input) {
-  first = '0';
-  second = '0';
-  sign = '';
-  percent = '0';
-  result = false;
-  input.value = '0';
-  return {first,second,sign,percent, result};
+import {input, keyCodes, keyValues, signsCodes, signsValues, tempBTN} from './script.js';
+export { click, keyDown, keyUp};
+//Clear All
+function Clear(calculation) {
+  calculation.first = '0';
+  calculation.second = '0';
+  calculation.sign = '';
+  calculation.percent = '0';
+  calculation.result = false;
+  input.value = '0';  
 }
 //Clear current enter value
-function ClearEntry() {
-  if (first !== '0' && sign === '') {
+function ClearEntry(calculation) {
+  if (calculation.first !== '0' && calculation.sign === '') {
     input.value = 0;
-    return first = '0';
+    return calculation.first = '0';
   }
   input.value = 0;
-  return second = '0';
+  return calculation.second = '0';
 }
 //Clear one digit of number
-function ClearOneDigit(resObj) {
-  if (obj.first !== '0' && obj.second !== '0' && obj.result) return;
-  if (obj.first !== '0' && obj.sign === '') {
-    obj.first = obj.first.slice(0, -1);
-    obj.first = obj.first.length == 0 ? '0' : obj.first;
-    input.value = obj.first;
-    return {obj};
+function ClearOneDigit(calculation) {
+  if (calculation.first !== '0' && calculation.second !== '0' && calculation.result) return;
+  if (calculation.first !== '0' && calculation.sign === '') {
+    calculation.first = calculation.first.slice(0, -1);
+    calculation.first = calculation.first.length == 0 ? '0' : calculation.first;
+    input.value = calculation.first;
+    return {calculation};
   }
-  obj.second = obj.second.slice(0, -1);
-  obj.second = obj.second.length == 0 ? '0' : obj.second;
-  input.value = obj.second;
-  return {obj};
+  calculation.second = calculation.second.slice(0, -1);
+  calculation.second = calculation.second.length == 0 ? '0' : calculation.second;
+  input.value = calculation.second;
+  return {calculation};
 }
 //count number digit after comma for method toFixed();
-function NumberDigitAfterComma(first, second, sign) {
+function NumberDigitAfterComma(calculation) {
 
   //variables store the number of decimal places
   let numberDigitFirst = 0;
   let numberDigitSecond = 0;
   
-  first = first.toString();
-  second = second.toString();
+  calculation.first = calculation.first.toString();
+  calculation.second = calculation.second.toString();
 
-  if (first.includes('.')) {
-    numberDigitFirst = first.split('.')[1].length;
+  if (calculation.first.includes('.')) {
+    numberDigitFirst = calculation.first.split('.')[1].length;
   }
-  if (second.includes('.')) {
-    numberDigitSecond = second.split('.')[1].length;
+  if (calculation.second.includes('.')) {
+    numberDigitSecond = calculation.second.split('.')[1].length;
   }
   //fractional value
-  let fractionFirstNumber = first.split('.')[1];
-  let fractionSecondNumber = second.split('.')[1];
+  let fractionFirstNumber = calculation.first.split('.')[1];
+  let fractionSecondNumber = calculation.second.split('.')[1];
 
   // check whether fractional parts are given when adding / subtracting an integer or not, if yes
   //then return the number of decimal places
-  switch (sign) {
+  switch (calculation.sign) {
     case "+":
       if (+fractionFirstNumber + +fractionSecondNumber === 100)
-        return 0
+        return 0;
+      break;  
     case "-":
       if (+fractionFirstNumber - +fractionSecondNumber === 0)
         return 0
+      break;    
   }
 
   return numberDigitFirst >= numberDigitSecond ? numberDigitFirst : numberDigitSecond;
@@ -103,196 +85,197 @@ function checkDigit(number, key) {
     return number = key == (',') ? number += '.' : number += key;
   }
 }
-//calc result
-function calcResult() {  
-  switch (sign) {
+//calc calculation.result
+function calcResult(calculation) {  
+  switch (calculation.sign) {
     case '+':
-      digitAfterComma = NumberDigitAfterComma(first, second, sign);
-      first = (+first) + (+second) ;        
+      calculation.digitAfterComma = NumberDigitAfterComma(calculation);
+      calculation.first = (+calculation.first) + (+calculation.second) ;        
       break;       
     case '-':
-      digitAfterComma = NumberDigitAfterComma(first, second, sign);
-      first = (+first) - (+second);
+      calculation.digitAfterComma = NumberDigitAfterComma(calculation);
+      calculation.first = (+calculation.first) - (+calculation.second);
       break;
     case '*':
-      first = (+first) * (+second);
-      digitAfterComma = first.toString().split('.')[1]?.length;
+      calculation.first = (+calculation.first) * (+calculation.second);
+      calculation.digitAfterComma = calculation.first.toString().split('.')[1]?.length;
       break;
     case '/':
-      if (second === '0') {
+      if (calculation.second === '0') {
         input.value = 'Деление на 0 невозможно';
         break;
       }
-      first = (+first) / (+second);
-      // if (first === 0) {
-      //   first = 'Переполнение';
-      //   return input.value = first;
+      calculation.first = (+calculation.first) / (+calculation.second);
+      // if (calculation.first === 0) {
+      //   calculation.first = 'Переполнение';
+      //   return input.value = calculation.first;
       // }
-      digitAfterComma = first.toString().split('.')[1]?.length;
+      calculation.digitAfterComma = calculation.first.toString().split('.')[1]?.length;
       break;
   }
-  first = first.toFixed(digitAfterComma);
-  input.value = +first;
-  result = true; 
-  return {first, result};       
+  calculation.first = calculation.first.toFixed(calculation.digitAfterComma);
+  input.value = +calculation.first;
+  calculation.result = true;    
 }
-//reverses the sign of a number
-function signReversal() {
-  if (second === '0' && sign === '') {
-    first = -first;
-    input.value = first;
+//reverses the calculation.sign of a number
+function signReversal(calculation) {
+  if (calculation.second === '0' && calculation.sign === '') {
+    calculation.first = -calculation.first;
+    input.value = calculation.first;
   }
-  else if (first !== '0' && second !== '0' && sign !== '' && !result) {
-    second = -second;
-    input.value = second;
+  else if (calculation.first !== '0' && calculation.second !== '0' && calculation.sign !== '' && !calculation.result) {
+    calculation.second = -calculation.second;
+    input.value = calculation.second;
   }
-  else if (first !== '0' && second !== '0' && sign !== '') {
-    first = -first;
-    input.value = first;
+  else if (calculation.first !== '0' && calculation.second !== '0' && calculation.sign !== '') {
+    calculation.first = -calculation.first;
+    input.value = calculation.first;
   }
-  else if (first !== '0' && sign !== '' && result) {
-    second = '0';
-    result = false;
+  else if (calculation.first !== '0' && calculation.sign !== '' && calculation.result) {
+    calculation.second = '0';
+    calculation.result = false;
   }
   else {
-    second = -second;
-    input.value = second;
+    calculation.second = -calculation.second;
+    input.value = calculation.second;
   }
 }
 //divide one to number
-function oneToShare() {
-  if (second === '0' && sign === '') {
-    first = 1 / first;
-    input.value = first;
+function oneToShare(calculation) {
+  if (calculation.second === '0' && calculation.sign === '') {
+    calculation.first = 1 / calculation.first;
+    input.value = calculation.first;
   }
-  else if (first !== '0' && second !== '0' && sign !== '' && !result) {
-    second = 1 / second;
-    input.value = second;
+  else if (calculation.first !== '0' && calculation.second !== '0' && calculation.sign !== '' && !calculation.result) {
+    calculation.second = 1 / calculation.second;
+    input.value = calculation.second;
   }
-  else if (first !== '0' && second !== '0' && sign !== '') {
-    first = 1 / first;
-    input.value = first;
+  else if (calculation.first !== '0' && calculation.second !== '0' && calculation.sign !== '') {
+    calculation.first = 1 / calculation.first;
+    input.value = calculation.first;
   }
-  // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the second will be equal to the entered value
-  else if (first !== '0' && sign !== '' && result) {
-    second = '0';
-    result = false;
+  // The calculation.result indicates that the math operation has completed. And when using the calculation.result in other calculations, the calculation.first number will be equal to the calculation.result, and the calculation.second will be equal to the entered value
+  else if (calculation.first !== '0' && calculation.sign !== '' && calculation.result) {
+    calculation.second = '0';
+    calculation.result = false;
   }
   else {
-    second = 1 / second;
-    input.value = second;
+    calculation.second = 1 / calculation.second;
+    input.value = calculation.second;
   }
 }
-//calc percent
-function calcPercent() {
-  percent = second;
-  second = +first * +percent / 100;
-  return input.value = second;
+//calc calculation.percent
+function calcPercent(calculation) {
+  calculation.percent = calculation.second;
+  calculation.second = +calculation.first * +calculation.percent / 100;
+  return input.value = calculation.second;
 }
 //calculates the square of a number
-function square() {
-  if (second === '0' && sign === '') {
-    first = Math.pow(first, 2);
-    input.value = first;
+function square(calculation) {
+  if (calculation.second === '0' && calculation.sign === '') {
+    calculation.first = Math.pow(calculation.first, 2);
+    input.value = calculation.first;
   }
-  else if (first !== '0' && second !== '0' && sign !== '' && !result) {
-    second = Math.pow(second, 2);
-    input.value = second;
+  else if (calculation.first !== '0' && calculation.second !== '0' && calculation.sign !== '' && !calculation.result) {
+    calculation.second = Math.pow(calculation.second, 2);
+    input.value = calculation.second;
   }
-  else if (first !== '0' && second !== '0' && sign !== '') {
-    first = Math.pow(first, 2);
-    input.value = first;
+  else if (calculation.first !== '0' && calculation.second !== '0' && calculation.sign !== '') {
+    calculation.first = Math.pow(calculation.first, 2);
+    input.value = calculation.first;
   }
-  // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the second will be equal to the entered value
-  else if (first !== '0' && sign !== '' && result) {
-    second = Math.pow(first, 2);
-    result = false;
+  // The calculation.result indicates that the math operation has completed. And when using the calculation.result in other calculations, the calculation.first number will be equal to the calculation.result, and the calculation.second will be equal to the entered value
+  else if (calculation.first !== '0' && calculation.sign !== '' && calculation.result) {
+    calculation.second = Math.pow(calculation.first, 2);
+    calculation.result = false;
   }
   else {
-    second = Math.pow(second, 2);
-    input.value = second;
+    calculation.second = Math.pow(calculation.second, 2);
+    input.value = calculation.second;
   }
 }
 //calculates the square root of a number
-function squareRoot() {
-  if (second === '0' && sign === '') {
-    first = Math.sqrt(first);
-    input.value = first;
+function squareRoot(calculation) {
+  if (calculation.second === '0' && calculation.sign === '') {
+    calculation.first = Math.sqrt(calculation.first);
+    input.value = calculation.first;
   }
-  else if (first !== '0' && second !== '0' && sign !== '' && !result) {
-    second = Math.sqrt(second);
-    input.value = second;
+  else if (calculation.first !== '0' && calculation.second !== '0' && calculation.sign !== '' && !calculation.result) {
+    calculation.second = Math.sqrt(calculation.second);
+    input.value = calculation.second;
   }
-  else if (first !== '0' && second !== '0' && sign !== '') {
-    first = Math.sqrt(first);
-    input.value = first;
+  else if (calculation.first !== '0' && calculation.second !== '0' && calculation.sign !== '') {
+    calculation.first = Math.sqrt(calculation.first);
+    input.value = calculation.first;
   }
-  else if (first !== '0' && sign !== '' && result) {
-    first = Math.sqrt(first);
-    result = false;
+  else if (calculation.first !== '0' && calculation.sign !== '' && calculation.result) {
+    calculation.first = Math.sqrt(calculation.first);
+    calculation.result = false;
   }
   else {
-    second = Math.sqrt(second);
-    input.value = second;
+    calculation.second = Math.sqrt(calculation.second);
+    input.value = calculation.second;
   }
 }
 
-function click(event) {
+function click(event, calculation) {
+    
   if (!event.target.classList.contains('btn')) return
   let key = event.target.textContent;
   if (keyValues.includes(key)) {
-    if (second === '0' && sign === '') {
-      first = checkDigit(first, key);
-      input.value = first;
+    if (calculation.second === '0' && calculation.sign === '') {
+      calculation.first = checkDigit(calculation.first, key);
+      input.value = calculation.first;
     }
-    // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the second will be equal to the entered value
-    else if (first !== '' && sign !== '' && result) {
-      second = '0';
-      second = checkDigit(second, key);
-      input.value = second;
-      result = false;
+    // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the calculation.second will be equal to the entered value
+    else if (calculation.first !== '' && calculation.sign !== '' && calculation.result) {
+      calculation.second = '0';
+      calculation.second = checkDigit(calculation.second, key);
+      input.value = calculation.second;
+      calculation.result = false;
     }
     else {
-      second = checkDigit(second, key);
-      input.value = second;
+      calculation.second = checkDigit(calculation.second, key);
+      input.value = calculation.second;
     }
   }
   if (signsValues.includes(key)) {
-    sign = key;
-    input.value = sign;
+    calculation.sign = key;
+    input.value = calculation.sign;
   }
   
+
+
   switch (key) {
     case 'CE':
-      return !result ? ClearEntry() : null;
+      return !calculation.result ? ClearEntry(calculation) : null;
     case 'C':
-      Clear();
+      Clear(calculation);            
       break;
     case '<=':
-      ClearOneDigit();
+      ClearOneDigit(calculation);        
       break;
     case '=':
-      calcResult();
+      calcResult(calculation);
       break;
     case '+/-':
-      signReversal();
+      signReversal(calculation);
       break;
     case '%':
-      calcPercent();
+      calcPercent(calculation);
       break;
     case '1/x':
-      oneToShare();
+      oneToShare(calculation);
       break;
     case 'x2':
-      square();
+      square(calculation);
       break;
     case '√X':
-      squareRoot();
+      squareRoot(calculation);
       break;
-  }
- 
+  } 
 }
-function keyDown(event) {  
+function keyDown(event, calculation) {  
   for (const iterator of tempBTN) {
     if (event.key == iterator.getAttribute('key') && event.shiftKey) {
       iterator.classList.toggle('btnDown');
@@ -307,56 +290,56 @@ function keyDown(event) {
     '%' : event.code && event.shiftKey ?
       null : event.code;
   if (keyCodes.includes(key)) {
-    if (second === '0' && sign === '') {
-      first = checkDigit(first, event.key);
-      input.value = input.value.length > 16 ? input.value : first
+    if (calculation.second === '0' && calculation.sign === '') {
+      calculation.first = checkDigit(calculation.first, event.key);
+      input.value = input.value.length > 16 ? input.value : calculation.first
     }
-    // The result indicates that the math operation has completed. And when using the result in other calculations, the first number will be equal to the result, and the second will be equal to the entered value
-    else if (first !== '' && sign !== '' && result) {
-      second = '0';
-      second = checkDigit(second, event.key);
-      input.value = input.value.length > 16 ? input.value : second;
-      result = false;
+    // The calculation.result indicates that the math operation has completed. And when using the calculation.result in other calculations, the calculation.first number will be equal to the calculation.result, and the calculation.second will be equal to the entered value
+    else if (calculation.first !== '' && calculation.sign !== '' && calculation.result) {
+      calculation.second = '0';
+      calculation.second = checkDigit(calculation.second, event.key);
+      input.value = input.value.length > 16 ? input.value : calculation.second;
+      calculation.result = false;
     }
     else {
-      second = checkDigit(second, event.key);
-      input.value = input.value.length > 16 ? input.value : second;
+      calculation.second = checkDigit(calculation.second, event.key);
+      input.value = input.value.length > 16 ? input.value : calculation.second;
     }
   }
   if (signsCodes.includes(key)) {
-    sign = event.key;
-    input.value = sign;
+    calculation.sign = event.key;
+    input.value = calculation.sign;
   }
 
   switch (key) {
     case 'Delete':
-      return !result ? ClearEntry() : null;
+      return !calculation.result ? ClearEntry(calculation) : null;
     case 'Escape':
-      Clear();
+      Clear(calculation);
       break;
     case 'Backspace':
-      ClearOneDigit();
+      ClearOneDigit(calculation);
       break;
     case 'NumpadEnter':
-      calcResult();
+      calcResult(calculation);
       break;
     case 'Enter':
-      calcResult();
+      calcResult(calculation);
       break;
     case 'F9':
-      signReversal();
+      signReversal(calculation);
       break;
     case '%':
-      calcPercent();
+      calcPercent(calculation);
       break;
     case 'KeyR':
-      oneToShare();
+      oneToShare(calculation);
       break;
     case 'KeyQ':
-      square();
+      square(calculation);
       break;
     case '√X':
-      squareRoot();
+      squareRoot(calculation);
       break;
   }
 }
