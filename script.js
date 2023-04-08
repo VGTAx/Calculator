@@ -22,7 +22,7 @@ let calculation = {
   digitAfterComma: 0,// the varibale stores the count of digit after comma in  // float number. 
   //Its use for function toFixed() 
 };
-
+let tooltip; //variable store tooltip with hotkey
 
 
 document.addEventListener('click', (event) => {
@@ -32,3 +32,28 @@ document.addEventListener('keydown', (event) => {
   keyDown(event, calculation);
 });
 document.addEventListener('keyup', keyUp);
+
+document.addEventListener('mouseover', (event) => {
+  if(event.target.classList.contains('btn')) {
+    setTimeout(()=>{
+      let anchorElem = event.target.closest('[data-tooltip]');
+      if(!anchorElem) return;
+
+      tooltip = document.createElement('div');
+      tooltip.className = 'tooltip';
+      tooltip.innerHTML = anchorElem.dataset.tooltip;      
+      
+      document.body.prepend(tooltip);
+      let coord = anchorElem.getBoundingClientRect();
+      tooltip.style.top = coord.bottom + 'px';
+      tooltip.style.left = coord.left + coord.width/2 - tooltip.offsetWidth/2 + 'px'
+    }, 1000);      
+  }
+})
+
+document.addEventListener('mouseout', (event) => {
+    if(tooltip) {
+      tooltip.remove();
+      tooltip = false;
+    }
+})

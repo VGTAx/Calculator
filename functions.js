@@ -1,7 +1,7 @@
 'use strict';
 
 import {input, keyCodes, keyValues, signsCodes, signsValues, tempBTN} from './script.js';
-export { click, keyDown, keyUp};
+export {click, keyDown, keyUp};
 //Clear All
 function Clear(calculation) {
   calculation.first = '0';
@@ -141,7 +141,7 @@ function signReversal(calculation) {
   }
 }
 //divide one to number
-function oneToShare(calculation) {
+function reciprocal(calculation) {
   if (calculation.second === '0' && calculation.sign === '') {
     calculation.first = 1 / calculation.first;
     input.value = calculation.first;
@@ -265,7 +265,7 @@ function click(event, calculation) {
       calcPercent(calculation);
       break;
     case '1/x':
-      oneToShare(calculation);
+      reciprocal(calculation);
       break;
     case 'x2':
       square(calculation);
@@ -333,7 +333,7 @@ function keyDown(event, calculation) {
       calcPercent(calculation);
       break;
     case 'KeyR':
-      oneToShare(calculation);
+      reciprocal(calculation);
       break;
     case 'KeyQ':
       square(calculation);
