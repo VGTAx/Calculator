@@ -1,7 +1,7 @@
 'use strict';
 
-import {input, keyCodes, keyValues, signsCodes, signsValues, tempBTN} from './script.js';
-export {click, keyDown, keyUp};
+import { input, keyCodes, keyValues, signsCodes, signsValues, tempBTN } from './script.js';
+export { click, keyDown, keyUp, mouseover, mouseout };
 //Clear All
 function Clear(calculation) {
   calculation.first = '0';
@@ -9,7 +9,7 @@ function Clear(calculation) {
   calculation.sign = '';
   calculation.percent = '0';
   calculation.result = false;
-  input.value = '0';  
+  input.value = '0';
 }
 //Clear current enter value
 function ClearEntry(calculation) {
@@ -24,15 +24,16 @@ function ClearEntry(calculation) {
 function ClearOneDigit(calculation) {
   if (calculation.first !== '0' && calculation.second !== '0' && calculation.result) return;
   if (calculation.first !== '0' && calculation.sign === '') {
+    
     calculation.first = calculation.first.slice(0, -1);
     calculation.first = calculation.first.length == 0 ? '0' : calculation.first;
     input.value = calculation.first;
-    return {calculation};
+    return { calculation };
   }
   calculation.second = calculation.second.slice(0, -1);
   calculation.second = calculation.second.length == 0 ? '0' : calculation.second;
   input.value = calculation.second;
-  return {calculation};
+  return { calculation };
 }
 //count number digit after comma for method toFixed();
 function NumberDigitAfterComma(calculation) {
@@ -40,7 +41,7 @@ function NumberDigitAfterComma(calculation) {
   //variables store the number of decimal places
   let numberDigitFirst = 0;
   let numberDigitSecond = 0;
-  
+
   calculation.first = calculation.first.toString();
   calculation.second = calculation.second.toString();
 
@@ -60,11 +61,11 @@ function NumberDigitAfterComma(calculation) {
     case "+":
       if (+fractionFirstNumber + +fractionSecondNumber === 100)
         return 0;
-      break;  
+      break;
     case "-":
       if (+fractionFirstNumber - +fractionSecondNumber === 0)
         return 0
-      break;    
+      break;
   }
 
   return numberDigitFirst >= numberDigitSecond ? numberDigitFirst : numberDigitSecond;
@@ -86,19 +87,19 @@ function checkDigit(number, key) {
   }
 }
 //calc calculation.result
-function calcResult(calculation) {  
+function calcResult(calculation) {
   switch (calculation.sign) {
     case '+':
       calculation.digitAfterComma = NumberDigitAfterComma(calculation);
-      calculation.first = (+calculation.first) + (+calculation.second) ;        
-      break;       
+      calculation.first = (+calculation.first) + (+calculation.second);
+      break;
     case '-':
       calculation.digitAfterComma = NumberDigitAfterComma(calculation);
       calculation.first = (+calculation.first) - (+calculation.second);
       break;
     case '*':
       calculation.first = (+calculation.first) * (+calculation.second);
-      calculation.digitAfterComma = calculation.first.toString().split('.')[1]?.length;
+      calculation.digitAfterComma = calculation.first.split('.')[1]?.length;
       break;
     case '/':
       if (calculation.second === '0') {
@@ -110,12 +111,12 @@ function calcResult(calculation) {
       //   calculation.first = 'Переполнение';
       //   return input.value = calculation.first;
       // }
-      calculation.digitAfterComma = calculation.first.toString().split('.')[1]?.length;
+      calculation.digitAfterComma = calculation.first.split('.')[1]?.length;
       break;
   }
-  calculation.first = calculation.first.toFixed(calculation.digitAfterComma);
+  calculation.first = calculation.first.toFixed(calculation.NumberDigitAfterComma);
   input.value = +calculation.first;
-  calculation.result = true;    
+  calculation.result = true;
 }
 //reverses the calculation.sign of a number
 function signReversal(calculation) {
@@ -219,7 +220,7 @@ function squareRoot(calculation) {
 }
 
 function click(event, calculation) {
-    
+
   if (!event.target.classList.contains('btn')) return
   let key = event.target.textContent;
   if (keyValues.includes(key)) {
@@ -234,26 +235,27 @@ function click(event, calculation) {
       input.value = calculation.second;
       calculation.result = false;
     }
-    else {
+    else {      
       calculation.second = checkDigit(calculation.second, key);
       input.value = calculation.second;
     }
   }
   if (signsValues.includes(key)) {
+    //prevent insertion of a sign into a number
+    if(calculation.second !== '0' && !calculation.result) return; 
+
     calculation.sign = key;
     input.value = calculation.sign;
   }
-  
-
 
   switch (key) {
     case 'CE':
       return !calculation.result ? ClearEntry(calculation) : null;
     case 'C':
-      Clear(calculation);            
+      Clear(calculation);
       break;
     case '<=':
-      ClearOneDigit(calculation);        
+      ClearOneDigit(calculation);
       break;
     case '=':
       calcResult(calculation);
@@ -273,9 +275,10 @@ function click(event, calculation) {
     case '√X':
       squareRoot(calculation);
       break;
-  } 
+  }
 }
-function keyDown(event, calculation) {  
+function keyDown(event, calculation) {
+
   for (const iterator of tempBTN) {
     if (event.key == iterator.getAttribute('key') && event.shiftKey) {
       iterator.classList.toggle('btnDown');
@@ -286,14 +289,15 @@ function keyDown(event, calculation) {
       break;
     }
   }
+
   let key = event.code == 'Digit5' && event.shiftKey ?
-    '%' : event.code && event.shiftKey ?
-      null : event.code;
+    '%' : event.code && event.shiftKey ? null : event.code;
+  
   if (keyCodes.includes(key)) {
-    if (calculation.second === '0' && calculation.sign === '') {
-      calculation.first = checkDigit(calculation.first, event.key);
-      input.value = input.value.length > 16 ? input.value : calculation.first
-    }
+      if (calculation.second === '0' && calculation.sign === '') {
+        calculation.first = checkDigit(calculation.first, event.key);
+        input.value = input.value.length > 16 ? input.value : calculation.first
+      }
     // The calculation.result indicates that the math operation has completed. And when using the calculation.result in other calculations, the calculation.first number will be equal to the calculation.result, and the calculation.second will be equal to the entered value
     else if (calculation.first !== '' && calculation.sign !== '' && calculation.result) {
       calculation.second = '0';
@@ -306,7 +310,10 @@ function keyDown(event, calculation) {
       input.value = input.value.length > 16 ? input.value : calculation.second;
     }
   }
-  if (signsCodes.includes(key)) {
+  if (signsCodes.includes(key)) {    
+    //prevent insertion of a sign into a number
+    if(calculation.second !== '0' && !calculation.result) return; 
+
     calculation.sign = event.key;
     input.value = calculation.sign;
   }
@@ -354,5 +361,29 @@ function keyUp(event) {
       iterator.classList.toggle('btnDown');
       break;
     }
+  }
+}
+function mouseover(event, mouseObject) {
+  if (event.target.classList.contains('btn')) {
+    mouseObject.timer = setTimeout(() => {
+      let anchorElem = event.target.closest('[data-tooltip]');
+      if (!anchorElem) return;
+
+      mouseObject.tooltip = document.createElement('div');
+      mouseObject.tooltip.className = 'tooltip';
+      mouseObject.tooltip.innerHTML = anchorElem.dataset.tooltip;
+
+      document.body.append(mouseObject.tooltip);
+      let coord = anchorElem.getBoundingClientRect();
+      mouseObject.tooltip.style.top = coord.bottom + 'px';
+      mouseObject.tooltip.style.left = coord.left + coord.width / 2 - mouseObject.tooltip.offsetWidth / 2 + 'px'
+    }, 1000);
+  }
+}
+function mouseout(event, mouseObject) {
+  clearTimeout(mouseObject.timer);
+  if (mouseObject.tooltip) {
+    mouseObject.tooltip.remove();
+    mouseObject.tooltip = false;
   }
 }
