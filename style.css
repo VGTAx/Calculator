@@ -35,7 +35,6 @@ body {
   user-select: none;
 }
 
-
 .buttons {
   display: grid;
   grid: repeat(6, calc(100%/6))/ repeat(4, calc(100%/4));

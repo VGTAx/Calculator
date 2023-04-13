@@ -90,7 +90,7 @@ function calcResult(calculation) {
   calculation.digitAfterComma = NumberDigitAfterComma(calculation);
   
   switch (calculation.sign) {
-    case '+':            
+    case '+':
       calculation.first = (+calculation.first) + (+calculation.second);      
       break;
     case '-':      
@@ -106,8 +106,10 @@ function calcResult(calculation) {
       }
       calculation.first = (+calculation.first) / (+calculation.second);
       break;
-  }  
-  calculation.first = calculation.first.toFixed(calculation.digitAfterComma);
+  } 
+  if(calculation.sign !== '/') {
+    calculation.first = calculation.first.toFixed(calculation.digitAfterComma);
+  }   
   input.value = +calculation.first;
   calculation.result = true;
 }
